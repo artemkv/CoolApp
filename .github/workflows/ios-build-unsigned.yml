@@ -28,41 +28,29 @@ jobs:
       - name: Install app dependencies
         run: npm install
 
-      - name: Cocoapods installation
-        run: cd ios/App && pod install
-
       - name: Build project app
         run: npm run build
 
       - name: Capacitor sync
         run: npx cap sync ios
 
-      # this is what google AI said, and makes sense
-      # this, in theory is someone else doing this:
-      # https://github.com/JustFrederik/Compile-to-ipa-without-developer-account
-      # so I could cross-check
+      # `disableAutomaticPackageResolution` prevents packages from
+      # automatically being resolved to versions other than those
+      # recorded in the Package.resolved file
       - name: Build Xcode Archive (Unsigned)
         run: |
-          xcodebuild -workspace './ios/App/App.xcworkspace' \
+          xcodebuild -project './ios/App/App.xcodeproj' \
             -scheme App \
             -destination 'generic/platform=iOS' \
+            -disableAutomaticPackageResolution \
             -archivePath App.xcarchive \
-            CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_IDENTITY="-" \
             archive
-
-      # this is what google AI said, and makes sense
-      - name: Package Unsigned .ipa
-        run: |
-          mkdir -p Payload
-          cp -r App.xcarchive/Products/Applications/App.app Payload/
-          zip -r App_unsigned.ipa Payload
-          rm -rf Payload
 
       # this is what google AI said, and makes sense
       - name: Upload .ipa Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-unsigned-ipa
-          path: App_unsigned.ipa
+          path: App.xcarchive

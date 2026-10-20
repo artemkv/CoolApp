@@ -1,0 +1,7 @@
+{
+  "name": "CoolApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}

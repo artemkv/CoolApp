@@ -6,8 +6,9 @@ on:
 
 jobs:
   build:
-    runs-on: macos-26
     name: Build iOS app (Unsigned)
+    runs-on: macos-26
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -31,7 +32,7 @@ jobs:
         run: npm run build
 
       - name: Capacitor sync
-        run: npx cap sync
+        run: npx cap sync ios
 
       # this is what google AI said, and makes sense
       # this, in theory is someone else doing this:

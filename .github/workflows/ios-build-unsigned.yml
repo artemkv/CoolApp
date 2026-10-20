@@ -1,0 +1,64 @@
+name: Build iOS Unsigned
+
+# only manually
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest # macos-15
+    name: Build iOS app (Unsigned)
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+        # Here I am completely skipping all the certificates part
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "16.4" # latest-stable should work too
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x # aligned with my dev env
+
+      - name: Install app dependencies
+        run: npm install
+
+      - name: Build project app
+        run: npm run build
+
+      - name: Capacitor sync
+        run: npx cap sync
+
+      # this is what google AI said, and makes sense
+      # this, in theory is someone else doing this:
+      # https://github.com/JustFrederik/Compile-to-ipa-without-developer-account
+      # so I could cross-check
+      - name: Build Xcode Archive (Unsigned)
+        run: |
+          xcodebuild -workspace './ios/App/App.xcworkspace' \
+            -scheme App \
+            -destination 'generic/platform=iOS' \
+            -archivePath App.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            archive
+
+      # this is what google AI said, and makes sense
+      - name: Package Unsigned .ipa
+        run: |
+          mkdir -p Payload
+          cp -r App.xcarchive/Products/Applications/App.app Payload/
+          zip -r App_unsigned.ipa Payload
+          rm -rf Payload
+
+      # this is what google AI said, and makes sense
+      - name: Upload .ipa Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-unsigned-ipa
+          path: App_unsigned.ipa

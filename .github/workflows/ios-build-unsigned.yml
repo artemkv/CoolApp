@@ -29,8 +29,7 @@ jobs:
         run: npm install
 
       - name: Cocoapods installation
-        script: |
-          cd ios/App && pod install
+        run: cd ios/App && pod install
 
       - name: Build project app
         run: npm run build

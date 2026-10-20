@@ -36,13 +36,12 @@ jobs:
 
       # `disableAutomaticPackageResolution` prevents packages from
       # automatically being resolved to versions other than those
-      # recorded in the Package.resolved file
+      # recorded in the Package.resolved file. But I don't have Package.resolved file
       - name: Build Xcode Archive (Unsigned)
         run: |
           xcodebuild -project './ios/App/App.xcodeproj' \
             -scheme App \
             -destination 'generic/platform=iOS' \
-            -disableAutomaticPackageResolution \
             -archivePath App.xcarchive \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="-" \

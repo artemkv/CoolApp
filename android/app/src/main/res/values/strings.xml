@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CoolApp</string>
+    <string name="title_activity_main">CoolApp</string>
+    <string name="package_name">net.artemkv.coolapp</string>
+    <string name="custom_url_scheme">net.artemkv.coolapp</string>
+</resources>

@@ -28,6 +28,10 @@ jobs:
       - name: Install app dependencies
         run: npm install
 
+      - name: Cocoapods installation
+        script: |
+          cd ios/App && pod install
+
       - name: Build project app
         run: npm run build
 
